@@ -3,11 +3,17 @@
 
 # Question 1 (Naked Twins)
 Q: How do we use constraint propagation to solve the naked twins problem?  
-A: *Student should provide answer here* TODO
+A: As constraint propagation is used per unit, we also apply naked twins strategy per unit, where unit may represent a column,
+ a row, a 3x3 box or a diagonal. For each of the unit of the given Sudoku, the naked twins constraint is the same:
+ for any found naked twin in the given unit, eliminate digits of the twin from the other peers' values. Having our naked twin
+ strategy defined, we implement it in the naked_twins function, which is used by reduce_puzzle function along with the other
+ strategies.
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: *Student should provide answer here*
+A: In order to solve the diagonal sudoku problem, we need to extend basic version of sudoku solver with two more diagonals.
+   As we abstract units in unitlist variable, we can simply append unitlist with the two diagonals in order to support
+   the diagonal sudoku solver almost for free.
 
 ### Install
 

@@ -3,6 +3,7 @@ assignments = []
 rows = 'ABCDEFGHI'
 cols = '123456789'
 
+
 def cross(a, b):
     "Cross product of elements in A and elements in B."
     return [s + t for s in a for t in b]
@@ -13,7 +14,8 @@ boxes = cross(rows, cols)
 row_units = [cross(r, cols) for r in rows]
 column_units = [cross(rows, c) for c in cols]
 square_units = [cross(rs, cs) for rs in ('ABC', 'DEF', 'GHI') for cs in ('123', '456', '789')]
-diagonals = [['A1','B2','C3','D4','E5','F6','G7','H8','I9'], ['I1','H2','G3','F4','E5','D6','C7','B8','A9']]
+diagonals = [['A1', 'B2', 'C3', 'D4', 'E5', 'F6', 'G7', 'H8', 'I9'],
+             ['I1', 'H2', 'G3', 'F4', 'E5', 'D6', 'C7', 'B8', 'A9']]
 unitlist = row_units + column_units + square_units + diagonals
 units = dict((s, [u for u in unitlist if s in u]) for s in boxes)
 peers = dict((s, set(sum(units[s], [])) - set([s])) for s in boxes)
@@ -29,8 +31,9 @@ def assign_value(values, box, value):
         assignments.append(values.copy())
     return values
 
+
 def get_twins(unit):
-    """Get list naked twins. Each naked twin is represented as a list of 2 boxes.
+    """Get list of naked twins. Each naked twin is represented as a list of 2 boxes.
     """
     inverse = {}
     for k, v in unit.items():
@@ -49,15 +52,15 @@ def naked_twins(values):
         the values dictionary with the naked twins eliminated from peers.
     """
     for unit in unitlist:
-        filtered = {k:values[k] for k in unit if len(values[k]) == 2}
+        filtered = {k: values[k] for k in unit if len(values[k]) == 2}
         twins = get_twins(filtered)
         for twin in twins:
             candidates = [u for u in unit if u not in twin]
             if len(candidates) > 0:
-                for t in twin:
-                    for c in candidates:
-                        new_value = ''.join(sorted(set(values[c]) - set(values[t])))
-                        values[c] = new_value
+                t = twin[0]
+                for c in candidates:
+                    new_value = ''.join(sorted(set(values[c]) - set(values[t])))
+                    values[c] = new_value
     return values
 
 
@@ -91,6 +94,16 @@ def display(values):
 
 
 def eliminate(values):
+    """Eliminate values from peers of each box with a single value.
+
+    Go through all the boxes, and whenever there is a box with a single value,
+    eliminate this value from the set of values of all its peers.
+
+    Args:
+        values: Sudoku in dictionary form.
+    Returns:
+        Resulting Sudoku in dictionary form after eliminating values.
+    """
     filtered = {k: v for k, v in values.items() if len(v) == 1}
     for key, value in filtered.items():
         for peer in peers[key]:
@@ -99,6 +112,14 @@ def eliminate(values):
 
 
 def only_choice(values):
+    """Finalize all values that are the only choice for a unit.
+
+    Go through all the units, and whenever there is a unit with a value
+    that only fits in one box, assign the value to this box.
+
+    Input: Sudoku in dictionary form.
+    Output: Resulting Sudoku in dictionary form after filling in only choices.
+    """
     for unit in unitlist:
         for digit in '123456789':
             dplaces = [box for box in unit if digit in values[box]]
@@ -108,6 +129,12 @@ def only_choice(values):
 
 
 def reduce_puzzle(values):
+    """
+    Apply all three strategies (elimination, only choice and naked twins) until Sudoku puzzle gets solved,
+    or there is no progress in solving given Sudoku.
+    Input: Sudoku in dictionary form.
+    Output: Resulting Sudoku in dictionary form after applying three strategies.
+    """
     stalled = False
     while not stalled:
         # Check how many boxes have a determined value
@@ -130,6 +157,12 @@ def reduce_puzzle(values):
 
 
 def search(values):
+    """
+    Find the solution to a Sudoku grid. For any partially solved Sudoku, recursively apply DFS on one of the unfilled
+    squares with the fewest possibilities until the puzzle gets solved.
+    Input: Sudoku in dictionary form.
+    Returns: The dictionary representation of the final sudoku grid. False if no solution exists.
+    """
     result = reduce_puzzle(values)
     if result is False:
         return False

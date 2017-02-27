@@ -11,9 +11,13 @@ A: As constraint propagation is used per unit, we also apply naked twins strateg
 
 # Question 2 (Diagonal Sudoku)
 Q: How do we use constraint propagation to solve the diagonal sudoku problem?  
-A: In order to solve the diagonal sudoku problem, we need to extend basic version of sudoku solver with two more diagonals.
+A: In order to solve the diagonal Sudoku problem, we need to extend basic version of sudoku solver with two more diagonals.
    As we abstract units in unitlist variable, we can simply append unitlist with the two diagonals in order to support
-   the diagonal sudoku solver almost for free.
+   the diagonal Sudoku solver almost for free. Having our constraints defined, we apply three strategies (elimination,
+   only choice and naked twins) until there is no progress in solving the Sudoku, and then we try to solve it recursively
+   by applying DFS starting on one of the unfilled squares with the fewest possibilities until the puzzle gets finally solved,
+   or return False if no solution exists.
+
 
 ### Install
 
